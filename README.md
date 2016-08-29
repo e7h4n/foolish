@@ -50,6 +50,7 @@ Look at the initialize step, I think you already realized there is no `app.js` o
 Just run `foolish` under your project directory, then you will get a `dist` directory which contains what you want.
 
 The building prosess is simple:
+
 1. Concat all `.js` files in your project directory (except `node_modules`) to `dist/app.js`. `main.js` will at head and `run.js` will be the last.
 2. Compile `main.less` to `dist/app.css`.
 3. Find assets which refrenced by `index.html` and `dist/app.css`, copy them to `dist` directory.
