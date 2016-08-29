@@ -3,7 +3,6 @@
 'use strict';
 
 var gulp = require('gulp');
-var fileCache = require('gulp-cache');
 var less = require('gulp-less');
 var concat = require('gulp-concat');
 var merge = require('merge-stream');
@@ -12,25 +11,21 @@ var rev = require('gulp-rev');
 var revCssUrl = require('gulp-rev-css-url');
 var revCollector = require('gulp-rev-collector');
 var tap = require('gulp-tap');
-var uglify = require('gulp-uglify');
-var crypto = require('crypto');
 var del = require('del');
 var vinylPaths = require('vinyl-paths');
-var gutil = require('gulp-util');
 var debug = require('debug');
 var rework = require('rework');
 var reworkPluginURL = require('rework-plugin-url');
 var through2 = require('through2');
 var _ = require('underscore');
-var path = require('path');
 var assets = require('gulp-assets');
 var rebase = require('gulp-css-url-rebase');
 
-var CDN = gutil.env.cdn || '';
-if (CDN.length > 0 && CDN[CDN.length - 1] !== '/') {
-    CDN = CDN + '/';
+var PREFIX = process.env.PREFIX || '';
+if (PREFIX.length > 0 && PREFIX[PREFIX.length - 1] !== '/') {
+    PREFIX = PREFIX + '/';
 }
-debug('init')('CDN=%s', CDN);
+debug('init')('PREFIX=%s', PREFIX);
 
 var tapDebug = function (name, showContent) {
     var logger = debug(name);
@@ -46,14 +41,6 @@ var tapDebug = function (name, showContent) {
 var BUILD = 'dist/';
 var SRC = '';
 var BASE = SRC || './';
-
-function makeHashKey(cache) {
-    return function (file) {
-        var shasum = crypto.createHash('sha1');
-        shasum.update(file.contents);
-        return cache + '|' + shasum.digest('hex');
-    };
-}
 
 function scripts() {
     var scriptFiles = gulp.src([
@@ -85,9 +72,6 @@ function scripts() {
             base: BASE
         }))
         .pipe(tapDebug('script'))
-        .pipe(fileCache(uglify(), {
-            key: makeHashKey('uglify')
-        }))
         .pipe(concat({
             path: 'app.js',
             newLine: ';'
@@ -190,7 +174,7 @@ gulp.task('build', ['clean'], function () {
             var content = JSON.parse(file.contents.toString());
 
             Object.keys(content).forEach(function (key) {
-                content[key] = CDN + content[key];
+                content[key] = PREFIX + content[key];
             });
 
             file.contents = new Buffer(JSON.stringify(content, null, 4));
@@ -211,13 +195,8 @@ gulp.task('clean', function () {
     }).pipe(vinylPaths(del));
 });
 
-gulp.task('clearCache', function (done) {
-    return fileCache.clearAll(done);
-});
-
 gulp.task('default', ['copy', 'build']);
 
-exports.CDN = CDN;
 exports.SRC = SRC;
 exports.BASE = BASE;
 exports.BUILD = BUILD;

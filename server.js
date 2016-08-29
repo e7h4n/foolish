@@ -87,6 +87,7 @@ exports.start = function (port) {
     port = port || 3000;
 
     app.listen(port, function () {
-        gutil.log('Development server listening on http://127.0.0.1:' + port);
+        gutil.log('Server listening on http://127.0.0.1:' + port);
+        gutil.log('This port can be changed by "foolish server --port PORT"');
     });
 };
