@@ -3,6 +3,9 @@
   "version": "1.0.0",
   "description": "Another foolish frontend build script.",
   "main": "index.js",
+  "bin": {
+      "foolish": "index.js"
+  },
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
