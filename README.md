@@ -1,4 +1,4 @@
-# A build script make you to be [a boring frontend-end developer]
+# A foolish front-end building script
 
 Building is not fun, especially when we have so many 3rd-party tools to make a building system for you (or your team).
 
