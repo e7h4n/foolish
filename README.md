@@ -1,8 +1,8 @@
 # A foolish front-end building script
 
-Building is not fun, especially when we have so many 3rd-party tools to make a building system for you (or your team).
+Building is not fun, especially so many choices (gulp, webpack, systemjs, ...) to make a building system for you (or your team).
 
-After 8 years front-end development (from 2008), I decide to jump out of this shit pit. So, here it is.
+So I decide to jump out of this shit pit. Here is my solution.
 
 ## Concept
 
