@@ -26,7 +26,12 @@ This build script is for single page app. It will concat all scripts to one and 
 
 ### Step 1: initialize
 
-There is 3 files is important for a foolish project, `index.html`, `main.js` (or `run.js`), `main.less`. But they are nor required. If you just want to create a module which only contains script, `index.html` and `main.less` is not necessary.
+Any directory is a valid foolish project, even if it's empty. Some filename is special, but not required:
+
+1. `index.html`: this is the landing page.
+2. `main.js`: this script will be at the top in combiled script.
+3. `run.js`: this script will be at the ned in combiled script.
+4. `main.less`: write your less style here.
 
 Here is a basic web page project which contains script and stylesheet:
 
