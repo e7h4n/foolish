@@ -11,7 +11,7 @@ So I decide to jump out of this shit pit. Here is my solution.
 
 ## Should I use this?
 
-This build script is for single page app. It will concat all scripts to one and auto reversion all assets referenced by html and css. There is no framework specified.
+This build script is for single page app. It just concat all project scripts to one, and compile a less style. No framework specified.
 
 ## Installation
 
@@ -62,8 +62,6 @@ The building prosess is simple:
 1. Concat all `.js` files in your project directory (except `node_modules`) to `dist/app.js`. `main.js` will at head and `run.js` will be the last.
 2. Compile `main.less` to `dist/app.css`.
 3. Find assets which refrenced by `index.html` and `dist/app.css`, copy them to `dist` directory.
-4. Reversion them all.
-5. If there is a `--prefix` parameter, all resource will add it.
 
 ## FAQ
 

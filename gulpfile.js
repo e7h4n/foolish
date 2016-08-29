@@ -7,9 +7,6 @@ var less = require('gulp-less');
 var concat = require('gulp-concat');
 var merge = require('merge-stream');
 var order = require('gulp-order');
-var rev = require('gulp-rev');
-var revCssUrl = require('gulp-rev-css-url');
-var revCollector = require('gulp-rev-collector');
 var tap = require('gulp-tap');
 var del = require('del');
 var vinylPaths = require('vinyl-paths');
@@ -159,34 +156,12 @@ gulp.task('copy', ['clean'], function () {
 });
 
 gulp.task('build', ['clean'], function () {
-    var allFiles = merge(scripts(), styles(), images())
+    return merge(scripts(), styles(), images(), gulp.src(SRC + 'index.html', {
+            base: BASE
+        }))
         .pipe(tapDebug('src'))
-        .pipe(rev())
-        .pipe(tapDebug('rev'))
-        .pipe(revCssUrl())
         .pipe(gulp.dest(BUILD))
         .pipe(tapDebug('dist'));
-
-    // 修改引用信息，增加 URL 前缀
-    var revManifest = allFiles
-        .pipe(rev.manifest())
-        .pipe(tap(function (file) {
-            var content = JSON.parse(file.contents.toString());
-
-            Object.keys(content).forEach(function (key) {
-                content[key] = PREFIX + content[key];
-            });
-
-            file.contents = new Buffer(JSON.stringify(content, null, 4));
-        }));
-
-    // 通过 manifest 中配置的文件信息，对 html 中的引用进行替换
-    return merge(revManifest, gulp.src(SRC + 'index.html', {
-        base: BASE
-    }))
-        .pipe(tapDebug('revManifest', true))
-        .pipe(revCollector()) // 引用替换
-        .pipe(gulp.dest(BUILD));
 });
 
 gulp.task('clean', function () {
