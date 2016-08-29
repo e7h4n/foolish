@@ -6,9 +6,12 @@ After 8 years front-end development (from 2008), I decide to jump out of this sh
 
 ## Concept
 
-* Simpler is better
-* Convention over configuration (Actully, there is nothing you can change)
-* "Just concat them together" is enought for most 
+* Simpler is better.
+* Convention over configuration. (Actully, there is nothing you can change)
+
+## Should I use this?
+
+This build script is for single page app. It will concat all scripts to one and auto reversion all assets referenced by html and css. There is no framework specified.
 
 ## Installation
 
