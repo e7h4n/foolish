@@ -63,6 +63,12 @@ The building prosess is simple:
 2. Compile `main.less` to `dist/app.css`.
 3. Find assets which refrenced by `index.html` and `dist/app.css`, copy them to `dist` directory.
 
+### Other scripts
+
+* [foolish-angular]: angular template cache support.
+* [foolish-rev]: assets reversion tool.
+* [foolish-prefix]: replace url prefix.
+
 ## FAQ
 
 ### Q: How can I import 3rd-party modules?
@@ -79,5 +85,6 @@ PR is welcome. I'll very happy if someone tell me some feature is useless and ca
 
 MIT
 
-[a boring frontend-end developer]:http://thebfed.com
-
+[foolish-angular]:https://github.com/perfectworks/foolish-angular
+[foolish-rev]:https://github.com/perfectworks/foolish-rev
+[foolish-prefix]:https://github.com/perfectworks/foolish-prefix
