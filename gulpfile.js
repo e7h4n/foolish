@@ -10,13 +10,14 @@ var order = require('gulp-order');
 var tap = require('gulp-tap');
 var del = require('del');
 var vinylPaths = require('vinyl-paths');
+var Vinyl = require('vinyl');
 var debug = require('debug');
 var rework = require('rework');
 var reworkPluginURL = require('rework-plugin-url');
 var through2 = require('through2');
 var _ = require('underscore');
 var assets = require('gulp-assets');
-var rebase = require('gulp-css-url-rebase');
+var path = require('path');
 
 var PREFIX = process.env.PREFIX || '';
 if (PREFIX.length > 0 && PREFIX[PREFIX.length - 1] !== '/') {
@@ -99,7 +100,6 @@ function styles() {
     }));
 
     return merge(cssVendors, lessStyle)
-        .pipe(rebase())
         .pipe(tapDebug('style'));
 }
 
@@ -128,6 +128,8 @@ function images() {
                     if (url.indexOf('#') !== -1) {
                         url = url.substr(0, url.indexOf('#'));
                     }
+
+                    url = path.resolve(cssFile.dirname, url);
 
                     files.push(url);
                     return url;
