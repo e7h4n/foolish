@@ -35,6 +35,7 @@ app.get('/app.js', function (req, res) {
     gulp.src([
         gulpfile.SRC + '**/*.js',
         '!' + gulpfile.SRC + 'node_modules/**/*.*',
+        '!' + gulpfile.SRC + 'gen/**/*.*',
         '!' + gulpfile.SRC + '**/gulpfile.js',
         '!' + gulpfile.BUILD + '**/*.*',
     ], {
