@@ -10,7 +10,6 @@ var order = require('gulp-order');
 var tap = require('gulp-tap');
 var del = require('del');
 var vinylPaths = require('vinyl-paths');
-var Vinyl = require('vinyl');
 var debug = require('debug');
 var rework = require('rework');
 var reworkPluginURL = require('rework-plugin-url');
@@ -18,12 +17,6 @@ var through2 = require('through2');
 var _ = require('underscore');
 var assets = require('gulp-assets');
 var path = require('path');
-
-var PREFIX = process.env.PREFIX || '';
-if (PREFIX.length > 0 && PREFIX[PREFIX.length - 1] !== '/') {
-    PREFIX = PREFIX + '/';
-}
-debug('init')('PREFIX=%s', PREFIX);
 
 var tapDebug = function (name, showContent) {
     var logger = debug(name);
@@ -36,24 +29,16 @@ var tapDebug = function (name, showContent) {
     });
 };
 
-var BUILD = 'dist/';
-var SRC = '';
-var BASE = SRC || './';
-
 function scripts() {
     var scriptFiles = gulp.src([
-        SRC + '**/*.js',
-        '!' + SRC + 'node_modules/**/*.*',
-        '!' + SRC + '**/gulpfile.js',
-        '!' + BUILD + '**/*.*',
-    ], {
-        base: BASE
-    })
+        '**/*.js',
+        '!node_modules/**/*.*',
+        '!**/gulpfile.js',
+        '!dist/**/*.*',
+    ])
     .pipe(tapDebug('script'));
 
-    var index = gulp.src(SRC + 'index.html', {
-        base: BASE
-    });
+    var index = gulp.src('index.html');
 
     var vendors = index.pipe(tapDebug('jsVendors')).pipe(assets({
         js: true,
@@ -63,12 +48,9 @@ function scripts() {
 
     var appJs = scriptFiles
         .pipe(order([
-            SRC + 'main.js',
-            SRC + '**/*.js',
-            SRC + 'run.js'
-        ], {
-            base: BASE
-        }))
+            'main.js',
+            '!run.js'
+        ]))
         .pipe(tapDebug('script'))
         .pipe(concat({
             path: 'app.js',
@@ -79,9 +61,7 @@ function scripts() {
 }
 
 function styles() {
-    var index = gulp.src(SRC + 'index.html', {
-        base: BASE
-    });
+    var index = gulp.src('index.html');
 
     var cssVendors = index.pipe(assets({
         js: false,
@@ -89,9 +69,7 @@ function styles() {
         cwd: false
     }));
 
-    var lessStyle = gulp.src(SRC + 'main.less', {
-        base: BASE
-    }).pipe(less({
+    var lessStyle = gulp.src('main.less').pipe(less({
         lint: true,
         noIeCompat: true,
         relativeUrls: true
@@ -105,16 +83,14 @@ function styles() {
 
 function images() {
     var allImages =  gulp.src([
-        '!' + SRC + 'node_modules/**/*.*',
-        '!' + BUILD + '**/*.*',
-        SRC + '**/*.png',
-        SRC + '**/*.jpg',
-        SRC + '**/*.gif',
-        SRC + '**/*.svg',
-        SRC + '**/*.ico'
-    ], {
-        base: BASE
-    });
+        '!node_modules/**/*.*',
+        '!dist/**/*.*',
+        '**/*.png',
+        '**/*.jpg',
+        '**/*.gif',
+        '**/*.svg',
+        '**/*.ico'
+    ]);
 
     var cssImages = styles()
         .pipe(through2.obj(function (cssFile, enc, done) {
@@ -137,9 +113,7 @@ function images() {
             files = _.uniq(files);
 
             var self = this;
-            gulp.src(files, {
-                base: BASE
-            }).pipe(through2.obj(function (imgFile, enc, cb) {
+            gulp.src(files).pipe(through2.obj(function (imgFile, enc, cb) {
                 self.push(imgFile);
                 cb();
             }, function () {
@@ -152,29 +126,22 @@ function images() {
 
 // tasks ------------------------------------------------------------
 gulp.task('copy', ['clean'], function () {
-    return gulp.src(SRC + 'index.html', {
-        base: BASE
-    }).pipe(gulp.dest(BUILD));
+    return gulp.src('index.html').pipe(gulp.dest('dist/'));
 });
 
 gulp.task('build', ['clean'], function () {
-    return merge(scripts(), styles(), images(), gulp.src(SRC + 'index.html', {
-            base: BASE
-        }))
+    return merge(scripts(), styles(), images(), gulp.src('index.html'))
         .pipe(tapDebug('src'))
-        .pipe(gulp.dest(BUILD))
+        .pipe(gulp.dest('dist/'))
         .pipe(tapDebug('dist'));
 });
 
 gulp.task('clean', function () {
-    return gulp.src(BUILD + '**/*.*', {
+    return gulp.src('dist/**/*.*', {
         read: false
     }).pipe(vinylPaths(del));
 });
 
 gulp.task('default', ['copy', 'build']);
 
-exports.SRC = SRC;
-exports.BASE = BASE;
-exports.BUILD = BUILD;
 exports.gulp = gulp;

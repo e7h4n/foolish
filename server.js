@@ -6,11 +6,9 @@ var express = require('express');
 var app = express();
 var serveStatic = require('serve-static');
 var gulp = require('gulp');
-var gulpfile = require('./gulpfile');
 var order = require('gulp-order');
 var through = require('through');
 var path = require('path');
-var ROOT = path.resolve(gulpfile.SRC);
 var less = require('gulp-less');
 var sourcemaps = require('gulp-sourcemaps');
 var tap = require('gulp-tap');
@@ -33,27 +31,23 @@ app.get('/app.js', function (req, res) {
     res.set('Content-Type', 'text/javascript');
 
     gulp.src([
-        gulpfile.SRC + '**/*.js',
-        '!' + gulpfile.SRC + 'node_modules/**/*.*',
-        '!' + gulpfile.SRC + 'gen/**/*.*',
-        '!' + gulpfile.SRC + '**/gulpfile.js',
-        '!' + gulpfile.BUILD + '**/*.*',
+        '**/*.js',
+        '!node_modules/**/*.*',
+        '!gen/**/*.*',
+        '!**/gulpfile.js',
+        '!dist/**/*.*',
     ], {
-        base: gulpfile.BASE,
         read: false
     })
     .pipe(order([
-        gulpfile.SRC + 'main.js',
-        gulpfile.SRC + '**/*.js',
-        gulpfile.SRC + 'run.js'
-    ], {
-        base: gulpfile.BASE
-    }))
+        'main.js',
+        '!run.js'
+    ]))
     .pipe(tapDebug('script'))
     .pipe((function () {
         var files = [];
         return through(function (file) {
-            files.push(file.path.substr(ROOT.length).replace(/\\/g, '/'));
+            files.push(file.relative);
         }, function () {
             res.send(files.map(function (file) {
                 return 'document.write(\'<script src="' + file + '"></script>\');';
@@ -65,7 +59,7 @@ app.get('/app.js', function (req, res) {
 app.get('/app.css', function (req, res) {
     res.set('Content-Type', 'text/css');
 
-    gulp.src(gulpfile.SRC + 'main.less')
+    gulp.src('main.less')
         .pipe(sourcemaps.init())
         .pipe(less({
             lint: true,
@@ -80,7 +74,7 @@ app.get('/app.css', function (req, res) {
         }));
 });
 
-app.use(serveStatic(gulpfile.BASE, {
+app.use(serveStatic('.', {
     index: ['index.html']
 }));
 
