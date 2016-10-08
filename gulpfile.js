@@ -113,7 +113,9 @@ function images() {
             files = _.uniq(files);
 
             var self = this;
-            gulp.src(files).pipe(through2.obj(function (imgFile, enc, cb) {
+            gulp.src(files, {
+                base: '.'
+            }).pipe(through2.obj(function (imgFile, enc, cb) {
                 self.push(imgFile);
                 cb();
             }, function () {
