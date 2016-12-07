@@ -8,6 +8,7 @@ var serveStatic = require('serve-static');
 var gulp = require('gulp');
 var order = require('gulp-order');
 var through = require('through');
+var fs = require('fs');
 var path = require('path');
 var less = require('gulp-less');
 var sourcemaps = require('gulp-sourcemaps');
@@ -72,6 +73,26 @@ app.get('/app.css', function (req, res) {
         .pipe(tap(function (file) {
             res.send(file.contents);
         }));
+});
+
+app.get('*', function (req, res, next) {
+    var filePath = path.join('.', req.url);
+    if (filePath.indexOf('/app.js') !== -1) {
+        filePath = filePath.replace(/\/app\.js$/, '/app.dev.js');
+        fs.stat(filePath, function (err, stats) {
+            if (err) {
+                next();
+                return;
+            }
+
+            console.log('[INFO] dev mode for ', req.url, '=>', filePath);
+            req.url = req.url.replace(/\/app\.js$/, '/app.dev.js');
+            next();
+        });
+        return;
+    }
+
+    next();
 });
 
 app.use(serveStatic('.', {
